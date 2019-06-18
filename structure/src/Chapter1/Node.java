@@ -5,18 +5,18 @@ package Chapter1;
  * @param <E>
  */
 public class Node<E> {
-    private Object date = null;         //数据域
+    private Object data = null;         //数据域
     private Node next;                  //指针域
 
     //初始化
     public Node(E e,Node next){
-        this.date = e;
+        this.data = e;
         this.next = next;
     }
 
     //得到数据
-    public Object getDate() {
-        return date;
+    public Object getData() {
+        return data;
     }
 
     //得到下一个节点
@@ -25,8 +25,8 @@ public class Node<E> {
     }
 
     //设置节点数据
-    public void setDate(Object date) {
-        this.date = date;
+    public void setData(Object date) {
+        this.data = date;
     }
 
     //设置下一个节点
@@ -36,6 +36,6 @@ public class Node<E> {
 
     @Override
     public String toString() {
-        return  "" + date;
+        return  "" + data;
     }
 }
