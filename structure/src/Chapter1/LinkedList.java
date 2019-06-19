@@ -6,28 +6,34 @@ package Chapter1;
  * @param <E>
  */
 public class LinkedList<E> {
-    private Node first;         //首节点
-    private int length = 0;     //代表链表长度
+    private Node first;          //首节点指针
+    private Node last;          //加入一个尾结点指针，可以使尾部插入从O(n)变成O(1)
+    private int length ;        //代表链表长度
 
     /**
      * 初始化创建一个空的首节点
+     * 头指针，尾指针都指向它
      */
     public LinkedList(){
         first = new Node(null,null);
+        last = first;
     }
 
     /**
-     * 添加一个新的元素
+     * 在尾部添加一个新的元素
      * @param e
      */
     public void add(E e){
         Node node = new Node(e,null);
-        if(length == 0){                    //如果是空链表，把新节点添加到首节点后面
+        if(length == 0){
+            //如果是空链表，把新节点添加到首节点后面,尾指针指向新指针
+            last = node;
             first.setNext(node);
             length++;
         }else{
-            Node current = getLastNode();   //非空链表，找到链表最后一个元素，然后添加到最后
-            current.setNext(node);
+            //非空链表，添加到尾指针后面，尾指针再指向它
+            last.setNext(node);
+            last=node;
             length++;
         }
     }
@@ -38,11 +44,7 @@ public class LinkedList<E> {
      * @return
      */
     public E get(int index){
-        if(index > length-1){       //索引超过当前链表实际长度，返回null
-            return null;
-        }
-        Node node = this.getNode(index);
-        return (E) node.getData();
+        return (E) getNode(index).getData();
     }
 
     /**
@@ -51,29 +53,31 @@ public class LinkedList<E> {
      */
     public E delete(){
         if(length == 0){
-            throw new RuntimeException("链表为空,无法删除元素");
+            throw new RuntimeException("链表为空，无法删除元素");
         }
-        Node node = first.getNext();
-        //如果链表长度是1，那么就把首节点的next设置为null，返回最后节点的数据
+        //如果链表长度是1，删除尾结点，返回尾结点的数据
         if(length == 1){
-            Node last = node;
+            Node node = last;
             first.setNext(null);
+            last = first;
             length--;
-            return (E) last.getData();
+            return (E) node.getData();
         }
-        node = this.getNode(length-2);   //获得倒数第二个节点
-        Node last = node.getNext();
-        node.setNext(null);                    //把倒数第二个节点的指针设为null
+        //取得倒数第二的节点，将其next设置为空，将尾结点指针指向倒数第二节点，返回尾结点的值
+        Node node = getNode(length-2);
+        E e = (E)last.getData();
+        node.setNext(null);
+        last = node;
         length--;
-        return (E) last.getData();
+        return e;
     }
 
     /**
      * 获取链表的最后一个节点
      * @return
      */
-    public Node getLastNode(){
-        return getNode(length-1);
+    private Node getLastNode(){
+        return last;
     }
 
     /**
@@ -103,7 +107,7 @@ public class LinkedList<E> {
     public boolean isContain(E e){
         if(length>0){
             Node node = null;
-            for(int i = 1;i<=length;i++){
+            for(int i = 0;i<=length-1;i++){
                 node = getNode(i);
                 if(node.getData() == e){
                     return true;
@@ -122,7 +126,10 @@ public class LinkedList<E> {
      * @return
      */
     private Node getNode(int index){
-        if(index < 0 || length == 0 || index > length-1){
+        if(index < 0 || index > length-1){
+            throw new IndexOutOfBoundsException("超出链表节点范围");
+        }
+        if(length == 0){
             return null;
         }
         Node node = first.getNext();
@@ -136,7 +143,6 @@ public class LinkedList<E> {
 
     /**
      * 指定位置插入链表
-     * 1.如果链表为空或者插入位置超过链表当前长度，直接在末尾添加元素。
      * 2.如果链表存在元素，要插入到首位置，先让新节点指向第二个节点
      *      再让first指向新节点
      * 3.插入位置在中间，用getNode(index-1) 找到指定位置节点上一个节点，
@@ -146,16 +152,19 @@ public class LinkedList<E> {
      * @param e
      */
     public void insert(int index,E e){
-        if (index<0){
-            throw new RuntimeException("插入位置不能小于0");
+        if (index<0 || index > length-1){
+            throw new IndexOutOfBoundsException("超出链表节点范围");
         }
-        if(length == 0 || index>length-1){
+        if(length == 0 || index==length-1){
+            //尾部插入
             this.add(e);
-        }else if(index == 0 && length > 0){//插入第一个，先指向第二个，然后让first指向新节点
+        }else if(index == 0 && length > 0){
+            //头部插入
             Node node = new Node(e,first.getNext());
             first.setNext(node);
             length++;
         }else{
+            //中间插入
             Node target = this.getNode(index-1);
             Node node = new Node(e,target.getNext());
             target.setNext(node);
@@ -168,21 +177,22 @@ public class LinkedList<E> {
      * @param index
      */
     public void remove(int index){
-        if(index<0){
-            throw new RuntimeException("索引不能小于0");
-        }else if(length == 0){
+        if(index<0 || index>length-1){
+            throw new RuntimeException("超出链表节点范围");
+        }else if(length == 0 ){
             throw new RuntimeException("链表为空");
-        }else if(index > length-1){
-            throw new RuntimeException("索引超出链表长度");
-        }else if(index == length-1){      //要删除的索引是最后一个，直接调用delete()方法。
+        }else if(index == length-1){
+            //删除尾结点
             this.delete();
             length--;
-        }else if(index == 0){              //删除first后面一个节点
+        }else if(index == 0){
+            //删除头结点
             Node node = first.getNext();
-            first.setNext(first.getNext().getNext());
+            first.setNext(node.getNext());
             node.setNext(null);
             length--;
-        }else{                              //删除中间节点
+        }else{
+            //删除中间节点
             Node node = this.getNode(index-1);
             Node target = this.getNode(index);
             node.setNext(target.getNext());
