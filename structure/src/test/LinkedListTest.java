@@ -1,5 +1,10 @@
 package test;
 
+
+/**
+ * 测试链表实现类
+ */
+
 import Chapter1.LinkedList;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,9 +56,11 @@ public class LinkedListTest {
 
     @Test
     public void insert() {
-        System.out.println(list);
-        list.insert(9,10);
-        System.out.println(list);
+        list = new LinkedList<Integer>();
+        for(int i = 0;i<3;i++){
+            list.insert(0,i);
+            System.out.println(list);
+        }
     }
 
     @Test

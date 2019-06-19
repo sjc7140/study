@@ -73,21 +73,12 @@ public class LinkedList<E> {
     }
 
     /**
-     * 获取链表的最后一个节点
-     * @return
-     */
-    private Node getLastNode(){
-        return last;
-    }
-
-    /**
      * 获取链表的长度
      * @return
      */
     public int length(){
         return length;
     }
-
 
     /**
      * 判断链表是否为空
@@ -106,10 +97,8 @@ public class LinkedList<E> {
      */
     public boolean isContain(E e){
         if(length>0){
-            Node node = null;
             for(int i = 0;i<=length-1;i++){
-                node = getNode(i);
-                if(node.getData() == e){
+                if(get(i)== e){
                     return true;
                 }
             }
@@ -118,6 +107,24 @@ public class LinkedList<E> {
         }else{
             return false;
         }
+    }
+
+    /**
+     * 查询指定元素第一次出现的位置
+     * 没有指定元素返回-1
+     * @param e
+     * @return
+     */
+    public int indexOfElement(E e){
+        if(length == 0){
+            return -1;
+        }
+        for(int i = 0;i<length;i++){
+            if(e == get(i)){
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -132,8 +139,13 @@ public class LinkedList<E> {
         if(length == 0){
             return null;
         }
+        if(index == length){
+            //如果是要取最后一个节点，不需要迭代，直接用尾指针
+            return last;
+        }
         Node node = first.getNext();
         int n = 0;
+        //从0位置依次
         while(n != index){
             node = node.getNext();
             n++;
@@ -143,21 +155,15 @@ public class LinkedList<E> {
 
     /**
      * 指定位置插入链表
-     * 2.如果链表存在元素，要插入到首位置，先让新节点指向第二个节点
-     *      再让first指向新节点
-     * 3.插入位置在中间，用getNode(index-1) 找到指定位置节点上一个节点，
-     *      新节点指向index位置节点，index-1位置节点指向新节点
-     * 4.插入数据后，length++ ;
      * @param index
      * @param e
      */
     public void insert(int index,E e){
-        if (index<0 || index > length-1){
-            throw new IndexOutOfBoundsException("超出链表节点范围");
-        }
         if(length == 0 || index==length-1){
             //尾部插入
             this.add(e);
+        }else if (index<0 || index > length-1){
+            throw new IndexOutOfBoundsException("超出链表节点范围");
         }else if(index == 0 && length > 0){
             //头部插入
             Node node = new Node(e,first.getNext());
@@ -183,8 +189,7 @@ public class LinkedList<E> {
             throw new RuntimeException("链表为空");
         }else if(index == length-1){
             //删除尾结点
-            this.delete();
-            length--;
+            delete();
         }else if(index == 0){
             //删除头结点
             Node node = first.getNext();

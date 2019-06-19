@@ -11,13 +11,41 @@ public class LinkedList1<E> {
 
     private LinkedList<E> list;
     //指定链表长度，即缓存大小
-    private int cacheMax = 10;
+    private int cacheMax = 5;
+
+    public LinkedList1(){
+        list = new LinkedList<E>();
+    }
 
     /**
-     * 查询缓存：没有，就添加到头部
+     * 查询缓存
      * @param e
      */
-    private void serach(E e){
+    public void serach(E e){
+        if(list.isContain(e)){
+            //数据存在缓存中，移除原来位置添加到头部
+            list.remove(list.indexOfElement(e));
+            list.insert(0,e);
+        }else{
+            if(list.length() < cacheMax){
+                //数据不在缓存中，缓存未满，将查询的数据添加到头部
+                list.insert(0,e);
+            }else{
+                //数据不在缓存中，缓存已满，将查询的数据添加到头部，删除尾部数据
+                list.insert(0,e);
+                list.delete();
+            }
+        }
+        for(int i = 0;i<list.length();i++){
+            System.out.print(list.get(i));
+            System.out.println();
+        }
+    }
 
+    /**
+     * 查看当前缓存中的数据
+     */
+    public void printCache(){
+        System.out.println(list);
     }
 }
