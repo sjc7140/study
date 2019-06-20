@@ -23,7 +23,7 @@ public class LinkedList1<E> {
      */
     public void serach(E e){
         if(list.isContain(e)){
-            //数据存在缓存中，移除原来位置添加到头部
+            //数据存在缓存中，将数据更新到头部
             list.remove(list.indexOfElement(e));
             list.insert(0,e);
         }else{
@@ -35,10 +35,6 @@ public class LinkedList1<E> {
                 list.insert(0,e);
                 list.delete();
             }
-        }
-        for(int i = 0;i<list.length();i++){
-            System.out.print(list.get(i));
-            System.out.println();
         }
     }
 

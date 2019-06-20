@@ -3,6 +3,7 @@ package Chapter1;
 
 /**
  * 单链表的实现
+ * 这里链表的索引是从0开始，在一些方法中进行判断很复杂？如insert
  * @param <E>
  */
 public class LinkedList<E> {
@@ -159,21 +160,35 @@ public class LinkedList<E> {
      * @param e
      */
     public void insert(int index,E e){
-        if(length == 0 || index==length-1){
-            //尾部插入
-            this.add(e);
-        }else if (index<0 || index > length-1){
+        if(index <0 ){
+            throw new IndexOutOfBoundsException("索引不能为负数");
+        }else if(length == 0 && index>0){
+            /*
+            插入式index和length有特殊关系，一般时候index=length-1
+            但是当链表为空的时候，index == length，此时用 index>length-1来判断索引越界就错了
+            所以此情况需要单独考虑
+             */
             throw new IndexOutOfBoundsException("超出链表节点范围");
-        }else if(index == 0 && length > 0){
-            //头部插入
-            Node node = new Node(e,first.getNext());
-            first.setNext(node);
-            length++;
+        }else if(length != 0 && index > length -1){
+            //链表不为空，index = length-1
+            throw new IndexOutOfBoundsException("超出链表节点范围");
+        }
+
+        if(index == 0){
+            if(length == 0){
+                //插入第一个位置，当链表为空时，其实是尾部插入
+                add(e);
+            }else{
+                //链表不为空，插入第一个位置
+                Node node = new Node(e,first.getNext());
+                first.setNext(node);
+                length++;
+            }
         }else{
             //中间插入
-            Node target = this.getNode(index-1);
-            Node node = new Node(e,target.getNext());
-            target.setNext(node);
+            Node prev = getNode(index-1);
+            Node node = new Node(e,prev.getNext());
+            prev.setNext(node);
             length++;
         }
     }
@@ -183,6 +198,9 @@ public class LinkedList<E> {
      * @param index
      */
     public void remove(int index){
+        if(length == 0){
+            throw new RuntimeException("链表为空");
+        }
         if(index<0 || index>length-1){
             throw new RuntimeException("超出链表节点范围");
         }else if(length == 0 ){
