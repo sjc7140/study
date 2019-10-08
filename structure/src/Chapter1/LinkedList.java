@@ -1,13 +1,13 @@
-package Chapter1;
-
+package demo;
 
 /**
  * 单链表的实现
  * 这里链表的索引是从0开始，在一些方法中进行判断很复杂？如insert
  * @param <E>
  */
+@SuppressWarnings("unchecked")
 public class LinkedList<E> {
-    private Node first;          //首节点指针
+    private Node first;         //首节点指针
     private Node last;          //加入一个尾结点指针，可以使尾部插入从O(n)变成O(1)
     private int length ;        //代表链表长度
 
@@ -87,7 +87,7 @@ public class LinkedList<E> {
      * @return
      */
     public boolean isEmpty(){
-        return length == 0?true:false;
+        return length == 0;
     }
 
     /**
@@ -134,11 +134,11 @@ public class LinkedList<E> {
      * @return
      */
     private Node getNode(int index){
+        if(length == 0){
+            throw new IndexOutOfBoundsException("链表为空");
+        }
         if(index < 0 || index > length-1){
             throw new IndexOutOfBoundsException("超出链表节点范围");
-        }
-        if(length == 0){
-            return null;
         }
         if(index == length){
             //如果是要取最后一个节点，不需要迭代，直接用尾指针
@@ -160,7 +160,7 @@ public class LinkedList<E> {
      * @param e
      */
     public void insert(int index,E e){
-        if(index <0 ){
+        if(index < 0){
             throw new IndexOutOfBoundsException("索引不能为负数");
         }else if(length == 0 && index>0){
             /*
